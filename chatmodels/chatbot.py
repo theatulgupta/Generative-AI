@@ -1,13 +1,13 @@
 from dotenv import load_dotenv
 from langchain_mistralai import ChatMistralAI
-from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
+from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
 
 load_dotenv()
 
-model = ChatMistralAI(model="mistral-small-2506", temperature=0.9)
+model = ChatMistralAI(name = "mistral-small-2506", temperature=0.9)
 
-# SystemMessage sets the AI's persona — stays at index 0 throughout the conversation
-messages = [
+# Typed as list[BaseMessage] so Pylance accepts HumanMessage and AIMessage appends
+messages: list[BaseMessage] = [
     SystemMessage(content="You are a helpful assistant."),
 ]
 

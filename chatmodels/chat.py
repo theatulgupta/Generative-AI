@@ -34,7 +34,7 @@ load_dotenv()
 # print(response.content)
 
 # Mistral
-# model = ChatMistralAI(model="mistral-small-2506")
+# model = ChatMistralAI(name="mistral-small-2506")
 # response = model.invoke("What is Retrieval Augmented Generation? Tell in short.")
 # print(response.content)
 
@@ -42,6 +42,6 @@ load_dotenv()
 # temperature: controls randomness (0 = focused, 1 = creative)
 # max_tokens: limits response length
 # -------------------------------------------------------
-model = ChatMistralAI(model="mistral-small-2506", temperature=0.9, max_tokens=20)
+model = ChatMistralAI(name="mistral-small-2506", temperature=0.9, max_tokens=20)
 response = model.invoke("Write a haiku about the ocean.")
 print(response.content)

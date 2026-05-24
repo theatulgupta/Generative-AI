@@ -24,7 +24,7 @@ tools = {
     "get_text_length": get_text_length,
 }
 
-llm = ChatMistralAI(model="mistral-small-2506")
+llm = ChatMistralAI(name="mistral-small-2506")
 
 # bind_tools registers available tools with the LLM
 # LLM will now include tool_calls in its response when it decides to use one

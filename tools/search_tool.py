@@ -10,7 +10,7 @@ load_dotenv()
 # max_results limits how many search results are returned
 search_tool = TavilySearch(max_results=3)
 
-model = ChatMistralAI(model="mistral-small-2506")
+model = ChatMistralAI(name="mistral-small-2506")
 parser = StrOutputParser()
 
 prompt = ChatPromptTemplate.from_template(

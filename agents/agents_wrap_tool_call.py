@@ -102,8 +102,8 @@ def human_approval(request, handler):
 # LLM + Agent Setup
 # =========================
 
-# Use model= (not name=) — name= silently falls back to default 'mistral-small'
-llm = ChatMistralAI(model="mistral-small-latest")
+
+llm = ChatMistralAI(name="mistral-small-latest")
 
 agent = create_agent(
     model=llm,

@@ -9,7 +9,7 @@ load_dotenv()
 prompt = ChatPromptTemplate.from_template("Explain {topic} in simple words")
 
 # 2. Model
-model = ChatMistralAI(model="mistral-small-2506")
+model = ChatMistralAI(name="mistral-small-2506")
 
 # 3. Output Parser — extracts plain string from AIMessage
 parser = StrOutputParser()

@@ -44,7 +44,7 @@ Short Summary:
     ),
 ])
 
-model = ChatMistralAI(model="mistral-small-2506", temperature=0.9)
+model = ChatMistralAI(name="mistral-small-2506", temperature=0.9)
 
 # StrOutputParser extracts plain string from AIMessage
 parser = StrOutputParser()

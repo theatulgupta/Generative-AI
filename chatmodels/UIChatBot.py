@@ -5,7 +5,7 @@ from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 
 load_dotenv()
 
-model = ChatMistralAI(model="mistral-small-2506", temperature=0.9)
+model = ChatMistralAI(name="mistral-small-2506", temperature=0.9)
 
 st.set_page_config(page_title="Mistral Chatbot", page_icon="🤖")
 st.title("🤖 Mistral Chatbot")

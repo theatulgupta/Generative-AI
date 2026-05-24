@@ -77,8 +77,8 @@ def get_news(city: str) -> str:
 # LLM + Agent Setup
 # =========================
 
-# Use model= (not name=) — name= silently falls back to default 'mistral-small'
-llm = ChatMistralAI(model="mistral-small-latest", temperature=0)
+
+llm = ChatMistralAI(name="mistral-small-latest", temperature=0)
 
 # create_agent abstracts the tool-calling loop — no manual while loop needed
 agent = create_agent(

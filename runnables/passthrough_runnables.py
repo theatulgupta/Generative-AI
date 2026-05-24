@@ -6,7 +6,7 @@ from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 
 load_dotenv()
 
-model = ChatMistralAI(model="mistral-small-2506")
+model = ChatMistralAI(name="mistral-small-2506")
 parser = StrOutputParser()
 
 # Prompt to generate code

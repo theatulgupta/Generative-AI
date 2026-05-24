@@ -71,8 +71,8 @@ def get_news(city: str) -> str:
 # LLM Setup
 # =========================
 
-# Use model= (not name=) — name= silently falls back to default 'mistral-small'
-llm = ChatMistralAI(model="mistral-small-latest", temperature=0)
+
+llm = ChatMistralAI(name="mistral-small-latest", temperature=0)
 
 # Tool registry — maps tool name string to callable for manual execution
 tools = {

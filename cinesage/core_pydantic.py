@@ -31,7 +31,7 @@ prompt = ChatPromptTemplate.from_messages([
     ("human", "{paragraph}"),
 ])
 
-model = ChatMistralAI(model="mistral-small-2506", temperature=0.9)
+model = ChatMistralAI(name="mistral-small-2506", temperature=0.9)
 
 # -------------------------------------------------------
 # Streamlit UI
