@@ -2,11 +2,11 @@ import streamlit as st
 from dotenv import load_dotenv
 from langchain_mistralai import ChatMistralAI
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
 
-# Load env
 load_dotenv()
 
-# Prompt template
+# System prompt instructs the model to extract structured info in a fixed text format
 prompt = ChatPromptTemplate.from_messages([
     (
         "system",
@@ -44,10 +44,17 @@ Short Summary:
     ),
 ])
 
-# Model
-model = ChatMistralAI(model_name="mistral-small-2506", temperature=0.9)
+model = ChatMistralAI(model="mistral-small-2506", temperature=0.9)
 
-# UI
+# StrOutputParser extracts plain string from AIMessage
+parser = StrOutputParser()
+
+# LCEL chain: prompt → model → plain string
+chain = prompt | model | parser
+
+# -------------------------------------------------------
+# Streamlit UI
+# -------------------------------------------------------
 st.set_page_config(page_title="CineSage", page_icon="🎬", layout="centered")
 st.title("🎬 CineSage")
 st.caption("Movie Information Extraction")
@@ -59,6 +66,5 @@ if st.button("Extract"):
         st.warning("Please enter a movie description.")
     else:
         with st.spinner("Extracting..."):
-            final_prompt = prompt.format_messages(paragraph=paragraph)
-            response = model.invoke(final_prompt)
-            st.text_area("Extracted Information", value=response.content, height=300)
+            result = chain.invoke({"paragraph": paragraph})
+            st.text_area("Extracted Information", value=result, height=300)
