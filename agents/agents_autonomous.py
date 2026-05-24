@@ -74,13 +74,12 @@ def get_news(city: str) -> str:
 
 
 # =========================
-# LLM + Agent Setup
+# Agent Setup
 # =========================
-
 
 llm = ChatMistralAI(name="mistral-small-latest", temperature=0)
 
-# create_agent abstracts the tool-calling loop — no manual while loop needed
+# create_agent handles the tool-calling loop internally — no manual while loop needed
 agent = create_agent(
     model=llm,
     tools=[get_weather, get_news],
@@ -105,6 +104,6 @@ while True:
         "messages": [HumanMessage(content=user_input)]
     })
 
-    # Last message in the result is the final AI response
+    # last message in the list is always the final AI response
     final_message = result["messages"][-1]
     print(f"\n[bold cyan]Assistant:[/bold cyan] {final_message.content}\n")

@@ -6,8 +6,7 @@ from langchain_core.output_parsers import StrOutputParser
 
 load_dotenv()
 
-# TavilySearch — real-time web search tool designed for LLM use
-# max_results limits how many search results are returned
+# TavilySearch fetches real-time web results — designed specifically for LLM pipelines
 search_tool = TavilySearch(max_results=3)
 
 model = ChatMistralAI(name="mistral-small-2506")
@@ -20,10 +19,9 @@ prompt = ChatPromptTemplate.from_template(
     """
 )
 
-# Chain: prompt → LLM → plain string
 chain = prompt | model | parser
 
-# Fetch real-time news via Tavily, then summarize with the LLM
+# first fetch the news, then pass it into the chain for summarization
 news_result = search_tool.invoke({"query": "Latest AI news of 2026"})
 result = chain.invoke({"news": news_result})
 

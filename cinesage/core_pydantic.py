@@ -11,7 +11,7 @@ from typing import Optional, List
 load_dotenv()
 
 
-# Pydantic schema — defines the exact structure we want the LLM to return
+# pydantic schema — tells the LLM exactly what fields to return and their types
 class MovieInfo(BaseModel):
     title: str
     release_year: Optional[int]
@@ -22,10 +22,10 @@ class MovieInfo(BaseModel):
     plot_summary: str
 
 
-# PydanticOutputParser generates format instructions to inject into the prompt
+# parser reads the schema and generates instructions we inject into the prompt
 parser = PydanticOutputParser(pydantic_object=MovieInfo)
 
-# {format_instructions} is replaced at runtime with the JSON schema instructions
+# {format_instructions} gets replaced at runtime with the JSON schema the LLM must follow
 prompt = ChatPromptTemplate.from_messages([
     ("system", "Extract movie info from the paragraph. {format_instructions}"),
     ("human", "{paragraph}"),
@@ -33,9 +33,6 @@ prompt = ChatPromptTemplate.from_messages([
 
 model = ChatMistralAI(name="mistral-small-2506", temperature=0.9)
 
-# -------------------------------------------------------
-# Streamlit UI
-# -------------------------------------------------------
 st.set_page_config(page_title="CineSage", page_icon="🎬", layout="centered")
 st.title("🎬 CineSage")
 st.caption("Movie Information Extraction — Structured JSON Output")
@@ -53,7 +50,7 @@ if st.button("Extract"):
             )
             response = model.invoke(final_prompt)
 
-            # Ensure content is a string before parsing
+            # response.content can sometimes be a list, make sure it's a string before parsing
             content = (
                 response.content
                 if isinstance(response.content, str)
@@ -61,7 +58,6 @@ if st.button("Extract"):
             )
 
             try:
-                # Parse into MovieInfo Pydantic object, then dump to dict for display
                 parsed = parser.parse(content)
                 st.text_area(
                     "Extracted Information",
@@ -69,5 +65,5 @@ if st.button("Extract"):
                     height=300,
                 )
             except Exception:
-                # Fallback: show raw LLM output if parsing fails
+                # if parsing fails just show the raw output
                 st.text_area("Extracted Information", value=content, height=300)

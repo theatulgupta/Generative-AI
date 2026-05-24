@@ -6,42 +6,40 @@ from langchain_mistralai import ChatMistralAI
 
 load_dotenv()
 
-# -------------------------------------------------------
-# Method 1: init_chat_model — universal initializer
-# format: "provider:model-name"
-# -------------------------------------------------------
+# two ways to init a model in langchain:
+# 1. init_chat_model — one function, works for any provider
+# 2. provider class directly — more explicit, more control
+
+# --- init_chat_model ---
+# format is "provider:model-name"
 
 # model = init_chat_model("google_genai:gemini-2.5-flash-lite")
 # response = model.invoke("Who is no. 1 T20i batsman?")
 # print(response.content)
 
 # model = init_chat_model("groq:llama-3.1-8b-instant")
-# response = model.invoke("What is Retrieval Augmented Generation? Tell in short.")
+# response = model.invoke("What is RAG? Tell in short.")
 # print(response.content)
 
-# -------------------------------------------------------
-# Method 2: Model Class — explicit provider import
-# -------------------------------------------------------
+# --- provider classes ---
 
 # Gemini
 # model = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite")
 # response = model.invoke("What is RAG?")
 # print(response.content)
 
-# Groq — known for very fast inference
+# Groq — very fast inference
 # model = ChatGroq(model="llama-3.1-8b-instant")
-# response = model.invoke("What is Retrieval Augmented Generation? Tell in short.")
+# response = model.invoke("What is RAG? Tell in short.")
 # print(response.content)
 
 # Mistral
 # model = ChatMistralAI(name="mistral-small-2506")
-# response = model.invoke("What is Retrieval Augmented Generation? Tell in short.")
+# response = model.invoke("What is RAG? Tell in short.")
 # print(response.content)
 
-# -------------------------------------------------------
-# temperature: controls randomness (0 = focused, 1 = creative)
-# max_tokens: limits response length
-# -------------------------------------------------------
+# temperature — how creative/random the output is (0 = focused, 1 = creative)
+# max_tokens — hard limit on how long the response can be
 model = ChatMistralAI(name="mistral-small-2506", temperature=0.9, max_tokens=20)
 response = model.invoke("Write a haiku about the ocean.")
 print(response.content)

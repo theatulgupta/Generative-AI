@@ -79,13 +79,12 @@ def get_news(city: str) -> str:
 # Human Approval Middleware
 # =========================
 
-# @wrap_tool_call intercepts every tool call before execution
-# cleaner than inline approval logic inside the agent loop
+# @wrap_tool_call intercepts every tool call before it runs
+# cleaner than putting approval logic inside the agent loop
 @wrap_tool_call
 def human_approval(request, handler):
-    tool_call = request.tool_call
-    tool_name = tool_call["name"]
-    tool_args = tool_call.get("args", {})
+    tool_name = request.tool_call["name"]
+    tool_args = request.tool_call.get("args", {})
 
     print(f"\n[yellow]Tool Request:[/yellow] {tool_name}({tool_args})")
 
@@ -94,21 +93,19 @@ def human_approval(request, handler):
     if approval.lower() != "yes":
         raise PermissionError(f"Tool '{tool_name}' execution denied.")
 
-    # Call the original handler to actually execute the tool
     return handler(request)
 
 
 # =========================
-# LLM + Agent Setup
+# Agent Setup
 # =========================
-
 
 llm = ChatMistralAI(name="mistral-small-latest")
 
 agent = create_agent(
     model=llm,
     tools=[get_weather, get_news],
-    middleware=[human_approval],   # middleware runs before every tool execution
+    middleware=[human_approval],
     system_prompt="You are a city assistant.",
 )
 

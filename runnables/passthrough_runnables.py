@@ -9,37 +9,31 @@ load_dotenv()
 model = ChatMistralAI(name="mistral-small-2506")
 parser = StrOutputParser()
 
-# Prompt to generate code
 code_prompt = ChatPromptTemplate.from_messages([
     ("system", "You are a code generator"),
     ("user", "{topic}"),
 ])
 
-# Prompt to explain code — receives the generated code as {topic}
 explain_prompt = ChatPromptTemplate.from_messages([
     ("system", "You are a helpful assistant that explains code"),
     ("user", "Explain the following code in simple words: {topic}"),
 ])
 
-# -------------------------------------------------------
-# Problem: chaining code_prompt | model | parser | explain_prompt | model | parser
-# loses the generated code — only the explanation comes out.
-#
-# Solution: RunnablePassthrough
-# passes the generated code string through unchanged as "code"
-# while the explanation branch processes it separately
-# -------------------------------------------------------
+# problem: if we chain code_prompt | model | parser | explain_prompt | model | parser
+# the generated code gets lost — only the explanation comes out at the end
+# we need both the code AND the explanation
 
-# Step 1: generate code
+# solution: RunnablePassthrough
+# after seq generates the code string, we split into two branches:
+# one branch just passes the code through unchanged
+# other branch takes the code and generates an explanation
 seq = code_prompt | model | parser
 
-# Step 2: split into code (passthrough) + explanation (new chain)
 seq2 = RunnableParallel({
     "code": RunnablePassthrough(),
     "explanation": explain_prompt | model | parser,
 })
 
-# Full chain: topic → code → {code, explanation}
 chain = seq | seq2
 
 result = chain.invoke({"topic": "Palindrome in Python"})

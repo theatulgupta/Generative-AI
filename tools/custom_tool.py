@@ -5,8 +5,8 @@ warnings.filterwarnings("ignore", category=LangChainPendingDeprecationWarning)
 from langchain.tools import tool
 
 
-# @tool turns a regular function into a LangChain tool
-# the docstring becomes the tool's description — LLM reads it to decide when to use the tool
+# @tool decorator turns a regular python function into a LangChain tool
+# the docstring is what the LLM reads to decide when to use this tool — keep it clear
 @tool
 def get_greeting(name: str) -> str:
     """Generate a greeting message for a user"""
@@ -16,7 +16,7 @@ def get_greeting(name: str) -> str:
 result = get_greeting.invoke({"name": "Atul"})
 print(result)
 
-# Inspect tool metadata
-print(get_greeting.name)         # function name
-print(get_greeting.description)  # docstring
-print(get_greeting.args_schema)  # auto-generated Pydantic schema from type hints
+# tool exposes metadata the LLM uses internally
+print(get_greeting.name)         # "get_greeting"
+print(get_greeting.description)  # the docstring
+print(get_greeting.args_schema)  # pydantic schema auto-generated from type hints

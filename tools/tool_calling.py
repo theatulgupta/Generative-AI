@@ -4,58 +4,50 @@ warnings.filterwarnings("ignore", category=LangChainPendingDeprecationWarning)
 
 from dotenv import load_dotenv
 from langchain_mistralai import ChatMistralAI
-from langchain_core.messages import HumanMessage, ToolMessage
+from langchain_core.messages import BaseMessage, HumanMessage, ToolMessage
 from langchain.tools import tool
 from rich import print
 
 load_dotenv()
 
 
-# @tool turns a regular function into a LangChain tool
-# the docstring is the tool description — LLM reads it to decide when to call this tool
+# docstring is what the LLM reads to decide when to call this tool
 @tool
 def get_text_length(text: str) -> int:
     """Returns the number of characters in a given text"""
     return len(text)
 
 
-# Tool registry — maps tool name (string) to the actual callable
+# registry so we can look up and call tools by name at runtime
 tools = {
     "get_text_length": get_text_length,
 }
 
 llm = ChatMistralAI(name="mistral-small-2506")
 
-# bind_tools registers available tools with the LLM
-# LLM will now include tool_calls in its response when it decides to use one
+# bind_tools tells the LLM which tools exist — it can now include tool_calls in its response
 llm_with_tool = llm.bind_tools([get_text_length])
 
-# -------------------------------------------------------
-# Step 1: Send user query — LLM decides whether to call a tool
-# -------------------------------------------------------
-messages = []
+# step 1 — send the user query, LLM decides if it needs a tool
+messages: list[BaseMessage] = []
 prompt = input("You: ")
 messages.append(HumanMessage(content=prompt))
 
 result = llm_with_tool.invoke(messages)
 messages.append(result)
 
-# -------------------------------------------------------
-# Step 2: If LLM requested a tool call, execute it and append result
-# -------------------------------------------------------
+# step 2 — if LLM asked for a tool, run it and add the result back to messages
 if result.tool_calls:
     tool_name = result.tool_calls[0]["name"]
     tool_args = result.tool_calls[0]["args"]
     tool_result = tools[tool_name].invoke(tool_args)
 
-    # ToolMessage links the result back to the specific tool call via tool_call_id
+    # tool_call_id links this result back to the specific tool call the LLM made
     messages.append(ToolMessage(
         content=str(tool_result),
         tool_call_id=result.tool_calls[0]["id"],
     ))
 
-# -------------------------------------------------------
-# Step 3: Send tool result back to LLM for the final answer
-# -------------------------------------------------------
+# step 3 — send everything back to LLM so it can give the final answer
 result = llm_with_tool.invoke(messages)
 print(result.content)

@@ -4,9 +4,10 @@ from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AI
 
 load_dotenv()
 
-model = ChatMistralAI(name = "mistral-small-2506", temperature=0.9)
+model = ChatMistralAI(name="mistral-small-2506", temperature=0.9)
 
-# Typed as list[BaseMessage] so Pylance accepts HumanMessage and AIMessage appends
+# list typed as BaseMessage so we can append HumanMessage and AIMessage into it
+# SystemMessage at index 0 sets the AI persona for the whole conversation
 messages: list[BaseMessage] = [
     SystemMessage(content="You are a helpful assistant."),
 ]
@@ -16,7 +17,6 @@ while True:
     print("Type 'exit' to quit.")
     prompt = input("You: ")
 
-    # Check exit before appending to avoid adding it to history
     if prompt.lower() == "exit":
         break
 
@@ -24,6 +24,6 @@ while True:
 
     response = model.invoke(messages)
 
-    # Append AI response to maintain full conversation history for next turn
+    # keep adding to messages so the model remembers the full conversation
     messages.append(AIMessage(content=response.content))
     print(f"Mistral: {response.content}")

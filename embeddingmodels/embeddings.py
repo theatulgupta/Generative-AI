@@ -3,7 +3,8 @@ from langchain_openai import OpenAIEmbeddings
 
 load_dotenv()
 
-# text-embedding-3-small supports custom dimensions (default 1536, here reduced to 1024)
+# text-embedding-3-small default is 1536 dims, we reduce to 1024 to save memory
+# dimensions param is only supported by OpenAI's v3 models
 embeddings = OpenAIEmbeddings(
     model="text-embedding-3-small",
     dimensions=1024,

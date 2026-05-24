@@ -130,7 +130,7 @@ Use:
 Limits the length of the generated response.
 
 ```python
-model = ChatMistralAI(model="mistral-small-2506", temperature=0.9, max_tokens=20)
+model = ChatMistralAI(name="mistral-small-2506", temperature=0.9, max_tokens=20)
 ```
 
 ---

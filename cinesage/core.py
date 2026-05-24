@@ -6,7 +6,6 @@ from langchain_core.output_parsers import StrOutputParser
 
 load_dotenv()
 
-# System prompt instructs the model to extract structured info in a fixed text format
 prompt = ChatPromptTemplate.from_messages([
     (
         "system",
@@ -45,16 +44,11 @@ Short Summary:
 ])
 
 model = ChatMistralAI(name="mistral-small-2506", temperature=0.9)
-
-# StrOutputParser extracts plain string from AIMessage
 parser = StrOutputParser()
 
-# LCEL chain: prompt → model → plain string
+# LCEL chain — paragraph goes in, formatted text comes out
 chain = prompt | model | parser
 
-# -------------------------------------------------------
-# Streamlit UI
-# -------------------------------------------------------
 st.set_page_config(page_title="CineSage", page_icon="🎬", layout="centered")
 st.title("🎬 CineSage")
 st.caption("Movie Information Extraction")

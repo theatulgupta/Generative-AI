@@ -60,7 +60,7 @@ from langchain_mistralai import ChatMistralAI
 
 model = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite")
 model = ChatGroq(model="llama-3.1-8b-instant")
-model = ChatMistralAI(model="mistral-small-2506")
+model = ChatMistralAI(name="mistral-small-2506")
 ```
 
 ---
@@ -82,7 +82,7 @@ Access the text with `.content`.
 
 ```python
 model = ChatMistralAI(
-    model="mistral-small-2506",
+    name="mistral-small-2506",
     temperature=0.9,
     max_tokens=20
 )
@@ -119,11 +119,7 @@ model = ChatGroq(model="llama-3.1-8b-instant")
 
 Needs: `GROQ_API_KEY`
 
-Groq is known for:
-
-```text
-Very fast inference speed
-```
+Groq is known for very fast inference speed.
 
 ---
 
@@ -132,7 +128,7 @@ Very fast inference speed
 ```python
 from langchain_mistralai import ChatMistralAI
 
-model = ChatMistralAI(model="mistral-small-2506")
+model = ChatMistralAI(name="mistral-small-2506")
 ```
 
 Needs: `MISTRAL_API_KEY`
@@ -208,7 +204,7 @@ Each turn appends both the user message and AI response to history.
 ```python
 from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 
-llm = HuggingFaceEndpoint(repo_id="deepseek-ai/DeepSeek-R1-0528")
+llm = HuggingFaceEndpoint(model="deepseek-ai/DeepSeek-R1-0528")
 chat_model = ChatHuggingFace(llm=llm)
 
 response = chat_model.invoke("What is RAG?")

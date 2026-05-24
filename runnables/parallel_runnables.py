@@ -9,13 +9,10 @@ load_dotenv()
 model = ChatMistralAI(name="mistral-small-2506")
 parser = StrOutputParser()
 
-# Two prompts asking for different levels of detail on the same topic
 short_prompt = ChatPromptTemplate.from_template("Explain {topic} in 1-2 lines")
 detailed_prompt = ChatPromptTemplate.from_template("Explain {topic} in detail")
 
-# -------------------------------------------------------
-# Basic RunnableParallel — both branches get the same input dict
-# -------------------------------------------------------
+# basic parallel — both branches get the same input dict, run at the same time
 # parallel_chain = RunnableParallel({
 #     "short": short_prompt | model | parser,
 #     "detailed": detailed_prompt | model | parser,
@@ -24,10 +21,8 @@ detailed_prompt = ChatPromptTemplate.from_template("Explain {topic} in detail")
 # print(result["short"])
 # print(result["detailed"])
 
-# -------------------------------------------------------
-# RunnableLambda — extract the right key before passing to each branch
-# useful when each branch needs a different slice of the input
-# -------------------------------------------------------
+# RunnableLambda — when each branch needs to pull a different key from the input
+# lambda extracts just the value that branch needs before passing to its prompt
 lambda_chain = RunnableParallel({
     "short": RunnableLambda(lambda x: x["short"]) | short_prompt | model | parser,
     "detailed": RunnableLambda(lambda x: x["detailed"]) | detailed_prompt | model | parser,

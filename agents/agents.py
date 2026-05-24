@@ -4,7 +4,7 @@ import requests
 
 from langchain_mistralai import ChatMistralAI
 from langchain.tools import tool
-from langchain_core.messages import HumanMessage, ToolMessage
+from langchain_core.messages import BaseMessage, HumanMessage, ToolMessage
 from tavily import TavilyClient
 from rich import print
 
@@ -71,24 +71,20 @@ def get_news(city: str) -> str:
 # LLM Setup
 # =========================
 
-
 llm = ChatMistralAI(name="mistral-small-latest", temperature=0)
 
-# Tool registry — maps tool name string to callable for manual execution
+# registry to call tools by name
 tools = {
     "get_weather": get_weather,
     "get_news": get_news,
 }
 
-# bind_tools tells the LLM which tools are available
 llm_with_tools = llm.bind_tools([get_weather, get_news])
 
 
 # =========================
 # Manual Agent Loop
 # =========================
-
-messages = []
 
 print("[bold green]City Intelligence System[/bold green]")
 print("Type 'exit' to quit.\n")
@@ -99,9 +95,10 @@ while True:
     if user_input.lower() == "exit":
         break
 
-    messages.append(HumanMessage(content=user_input))
+    # typed as BaseMessage so we can mix HumanMessage, AIMessage, ToolMessage
+    messages: list[BaseMessage] = [HumanMessage(content=user_input)]
 
-    # Inner loop — keeps running until LLM stops requesting tool calls
+    # inner loop keeps going until the LLM stops asking for tools
     while True:
         result = llm_with_tools.invoke(messages)
         messages.append(result)
@@ -111,7 +108,7 @@ while True:
                 tool_name = tool_call["name"]
                 tool_args = tool_call["args"]
 
-                # Human-in-the-loop: ask for approval before executing each tool
+                # ask user before running any tool
                 confirm = input(
                     f"Agent wants to call '{tool_name}' with args {tool_args}. Approve? (yes/no): "
                 )
@@ -124,16 +121,14 @@ while True:
                     ))
                     continue
 
-                # Execute the tool and send result back to LLM
                 tool_result = tools[tool_name].invoke(tool_args)
                 messages.append(ToolMessage(
                     content=tool_result,
                     tool_call_id=tool_call["id"],
                 ))
 
-            continue  # LLM may call more tools after seeing results
+            continue  # go back to LLM — it may call more tools after seeing results
 
         else:
-            # No more tool calls — LLM has a final answer
             print(f"\n[bold cyan]Assistant:[/bold cyan] {result.content}\n")
             break
